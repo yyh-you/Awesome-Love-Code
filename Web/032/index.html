@@ -1,273 +1,288 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>小孙同学&#10084;&#65039;</title>
-    <script src="https://cdn.jsdelivr.net/gh/zyoushuo/Blog/hexo/js/mouse_slide.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/zyoushuo/Blog/hexo/js/clicklove.js"></script>
-  <style type="text/css">
-    html, body {
-      height: 100%;
-      padding: 0;
-      margin: 0;
-      background: #000;
-    }
-    canvas {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-    }
-    .namebox{
-      color: #fff;
-      position: absolute;   
-            top: 50%;   
-            left: 50%;   
-            -webkit-transform: translate(-50%, -50%);   
-            -moz-transform: translate(-50%, -50%);   
-            -ms-transform: translate(-50%, -50%);   
-            -o-transform: translate(-50%, -50%);   
-            transform: translate(-50%, -50%);   
-    }
-    .namebox h1{
-      margin: 0 auto;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>星空艺术字</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+            overflow: hidden;
+        }
 
+        /* 星空动画 */
+        @keyframes twinkle {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        @keyframes shooting-star {
+            0% {
+                transform: translateX(0) translateY(0) rotate(-45deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(-500px) translateY(500px) rotate(-45deg);
+                opacity: 0;
+            }
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #fff;
+            border-radius: 50%;
+            animation: twinkle 1s infinite;
+        }
+
+        .shooting-star {
+            position: absolute;
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(90deg, #fff, transparent);
+            animation: shooting-star 2s linear infinite;
+        }
+
+        /* 文字容器 */
+        .text-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        /* 粒子文字效果 */
+        .particle-text {
+            font-size: 4em;
+            color: #ffffff;
+            text-shadow: 0 0 10px #ffffff,
+                         0 0 20px #ffffff,
+                         0 0 30px #ffffff;
+            opacity: 0.8;
+            font-family: 'Arial', sans-serif;
+            letter-spacing: 5px;
+        }
+
+        .particle {
+            position: absolute;
+            background: #fff;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0;
+        }
+    </style>
 </head>
 <body>
-<canvas id="pinkboard"></canvas>
-<script>
-  var settings = {
-    particles: {
-      length: 500, // maximum amount of particles
-      duration: 2, // particle duration in sec
-      velocity: 100, // particle velocity in pixels/sec
-      effect: -0.75, // play with this for a nice effect
-      size: 30, // particle size in pixels
-    },
-  };
-  (
-          function(){
-            var b=0;
-            var c=["ms","moz","webkit","o"];
-            for(var a=0;a<c.length&&!window.requestAnimationFrame;++a){
-              window.requestAnimationFrame=window[c[a]+"RequestAnimationFrame"];
-              window.cancelAnimationFrame=window[c[a]+"CancelAnimationFrame"]||window[c[a]+"CancelRequestAnimationFrame"]
+    <div class="stars"></div>
+    <div class="text-container">
+        <div class="particle-text">游永辉</div>
+    </div>
+
+    <script>
+        // 创建星星
+        function createStars() {
+            const stars = document.querySelector('.stars');
+            for (let i = 0; i < 200; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.animationDelay = `${Math.random() * 2}s`;
+                stars.appendChild(star);
             }
-            if(!window.requestAnimationFrame){
-              window.requestAnimationFrame=function(h,e){
-                var d=new Date().getTime();
-                var f=Math.max(0,16-(d-b));
-                var g=window.setTimeout(function(){h(d+f)},f);b=d+f;return g}}if(!window.cancelAnimationFrame){window.cancelAnimationFrame=function(d){clearTimeout(d)}}}());
-  var Point = (function() {
-    function Point(x, y) {
-      this.x = (typeof x !== 'undefined') ? x : 0;
-      this.y = (typeof y !== 'undefined') ? y : 0;
-    }
-    Point.prototype.clone = function() {
-      return new Point(this.x, this.y);
-    };
-    Point.prototype.length = function(length) {
-      if (typeof length == 'undefined')
-        return Math.sqrt(this.x * this.x + this.y * this.y);
-      this.normalize();
-      this.x *= length;
-      this.y *= length;
-      return this;
-    };
+        }
 
-    Point.prototype.normalize = function() {
-      var length = this.length();
-      this.x /= length;
-      this.y /= length;
-      return this;
-    };
-    return Point;
-  })();
+        // 创建流星
+        function createShootingStar() {
+            const stars = document.querySelector('.stars');
+            const shootingStar = document.createElement('div');
+            shootingStar.className = 'shooting-star';
+            shootingStar.style.top = `${Math.random() * 50}%`;
+            shootingStar.style.right = '0';
+            stars.appendChild(shootingStar);
 
-  var Particle = (function() {
-    function Particle() {
-      this.position = new Point();
-      this.velocity = new Point();
-      this.acceleration = new Point();
-      this.age = 0;
-    }
-    Particle.prototype.initialize = function(x, y, dx, dy) {
-      this.position.x = x;
-      this.position.y = y;
-      this.velocity.x = dx;
-      this.velocity.y = dy;
-      this.acceleration.x = dx * settings.particles.effect;
-      this.acceleration.y = dy * settings.particles.effect;
-      this.age = 0;
-    };
-    Particle.prototype.update = function(deltaTime) {
-      this.position.x += this.velocity.x * deltaTime;
-      this.position.y += this.velocity.y * deltaTime;
-      this.velocity.x += this.acceleration.x * deltaTime;
-      this.velocity.y += this.acceleration.y * deltaTime;
-      this.age += deltaTime;
-    };
+            shootingStar.addEventListener('animationend', () => {
+                shootingStar.remove();
+            });
+        }
 
-    Particle.prototype.draw = function(context, image) {
-      function ease(t) {
-        return (--t) * t * t + 1;
-      }
-      var size = image.width * ease(this.age / settings.particles.duration);
-      context.globalAlpha = 1 - this.age / settings.particles.duration;
-      context.drawImage(image, this.position.x - size / 2, this.position.y - size / 2, size, size);
-    };
-    return Particle;
-  })();
-  /*
+        // 文字粒子效果
+        function createParticles(event) {
+            const text = document.querySelector('.particle-text');
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            
+            const x = event.clientX;
+            const y = event.clientY;
+            
+            particle.style.left = x + 'px';
+            particle.style.top = y + 'px';
+            particle.style.width = '2px';
+            particle.style.height = '2px';
+            
+            document.body.appendChild(particle);
+            
+            setTimeout(() => {
+                particle.remove();
+            }, 1000);
+        }
 
-  * ParticlePool class
-
-  */
-  var ParticlePool = (function() {
-    var particles,
-            firstActive = 0,
-            firstFree = 0,
-            duration = settings.particles.duration;
-    function ParticlePool(length) {
-// create and populate particle pool
-      particles = new Array(length);
-      for (var i = 0; i < particles.length; i++)
-        particles[i] = new Particle();
-    }
-    ParticlePool.prototype.add = function(x, y, dx, dy) {
-      particles[firstFree].initialize(x, y, dx, dy);
-// handle circular queue
-      firstFree++;
-      if (firstFree == particles.length) firstFree = 0;
-      if (firstActive == firstFree ) firstActive++;
-      if (firstActive == particles.length) firstActive = 0;
-    };
-    ParticlePool.prototype.update = function(deltaTime) {
-      var i;
-// update active particles
-      if (firstActive < firstFree) {
-        for (i = firstActive; i < firstFree; i++)
-          particles[i].update(deltaTime);
-      }
-      if (firstFree < firstActive) {
-        for (i = firstActive; i < particles.length; i++)
-          particles[i].update(deltaTime);
-        for (i = 0; i < firstFree; i++)
-          particles[i].update(deltaTime);
-      }
-// remove inactive particles
-      while (particles[firstActive].age >= duration && firstActive != firstFree) {
-        firstActive++;
-        if (firstActive == particles.length) firstActive = 0;
-      }
-    };
-    ParticlePool.prototype.draw = function(context, image) {
-// draw active particles
-      if (firstActive < firstFree) {
-        for (i = firstActive; i < firstFree; i++)
-          particles[i].draw(context, image);
-      }
-      if (firstFree < firstActive) {
-        for (i = firstActive; i < particles.length; i++)
-          particles[i].draw(context, image);
-        for (i = 0; i < firstFree; i++)
-          particles[i].draw(context, image);
-      }
-    };
-    return ParticlePool;
-  })();
-  /*
-
-  * Putting it all together
-
-  */
-  (function(canvas) {
-    var context = canvas.getContext('2d'),
-            particles = new ParticlePool(settings.particles.length),
-            particleRate = settings.particles.length / settings.particles.duration, // particles/sec
-            time;
-// get point on heart with -PI <= t <= PI
-    function pointOnHeart(t) {
-      return new Point(
-              160 * Math.pow(Math.sin(t), 3),
-              130 * Math.cos(t) - 50 * Math.cos(2 * t) - 20 * Math.cos(3 * t) - 10 * Math.cos(4 * t) + 25
-      );
-
-    }
-
-// creating the particle image using a dummy canvas
-
-    var image = (function() {
-      var canvas = document.createElement('canvas'),
-              context = canvas.getContext('2d');
-      canvas.width = settings.particles.size;
-      canvas.height = settings.particles.size;
-// helper function to create the path
-      function to(t) {
-        var point = pointOnHeart(t);
-        point.x = settings.particles.size / 2 + point.x * settings.particles.size / 350;
-        point.y = settings.particles.size / 2 - point.y * settings.particles.size / 350;
-        return point;
-      }
-// create the path
-      context.beginPath();
-      var t = -Math.PI;
-      var point = to(t);
-      context.moveTo(point.x, point.y);
-      while (t < Math.PI) {
-        t += 0.01; // baby steps!
-        point = to(t);
-        context.lineTo(point.x, point.y);
-      }
-      context.closePath();
-// create the fill
-      context.fillStyle = '#ff30c5';
-      // context.fillStyle = '#ea80b0';
-      context.fill();
-// create the image
-      var image = new Image();
-      image.src = canvas.toDataURL();
-      return image;
-    })();
-// render that thing!
-    function render() {
-// next animation frame
-      requestAnimationFrame(render);
-// update time
-      var newTime = new Date().getTime() / 1000,
-              deltaTime = newTime - (time || newTime);
-      time = newTime;
-// clear canvas
-      context.clearRect(0, 0, canvas.width, canvas.height);
-// create new particles
-      var amount = particleRate * deltaTime;
-      for (var i = 0; i < amount; i++) {
-        var pos = pointOnHeart(Math.PI - 2 * Math.PI * Math.random());
-        var dir = pos.clone().length(settings.particles.velocity);
-        particles.add(canvas.width / 2 + pos.x, canvas.height / 2 - pos.y, dir.x, -dir.y);
-      }
-// update and draw particles
-      particles.update(deltaTime);
-      particles.draw(context, image);
-    }
-// handle (re-)sizing of the canvas
-    function onResize() {
-      canvas.width = canvas.clientWidth;
-      canvas.height = canvas.clientHeight;
-    }
-    window.onresize = onResize;
-// delay rendering bootstrap
-    setTimeout(function() {
-      onResize();
-      render();
-    }, 10);
-  })(document.getElementById('pinkboard'));
-</script>
-<div class="namebox">
-  <h1>小孙同学&#10084;&#65039;小爱同学</h1>
-</div>
+        // 初始化
+        createStars();
+        setInterval(createShootingStar, 3000);
+        
+        document.addEventListener('mousemove', createParticles);
+    </script>
 </body>
 </html>
+<!-- // ... existing code ...
+
+/* 星空动画 */
+@keyframes twinkle {
+    0% { opacity: 0.3; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.2); }
+    100% { opacity: 0.3; transform: scale(0.8); }
+}
+
+.star {
+    position: absolute;
+    width: 3px;  /* 增大星星尺寸 */
+    height: 3px;
+    background: #fff;
+    border-radius: 50%;
+    animation: twinkle 2s infinite ease-in-out;  /* 调整动画时间和缓动效果 */
+    box-shadow: 0 0 4px #fff;  /* 添加发光效果 */
+}
+
+// ... existing code ... -->
+
+<script>
+    // 创建星星
+    function createStars() {
+        const stars = document.querySelector('.stars');
+        for (let i = 0; i < 300; i++) {  // 增加星星数量
+            const star = document.createElement('div');
+            star.className = 'star';
+            
+            // 更随机的位置分布
+            const randomSize = Math.random() * 3 + 1;  // 1-4px的随机大小
+            star.style.width = `${randomSize}px`;
+            star.style.height = `${randomSize}px`;
+            
+            // 使用更大范围的随机位置
+            star.style.left = `${Math.random() * 120 - 10}%`;  // -10% 到 110%
+            star.style.top = `${Math.random() * 120 - 10}%`;   // -10% 到 110%
+            
+            // 随机动画延迟和持续时间
+            star.style.animationDelay = `${Math.random() * 3}s`;
+            star.style.animationDuration = `${Math.random() * 3 + 1}s`;  // 1-4s的随机动画时间
+            
+            stars.appendChild(star);
+        }
+    }
+
+    // 创建多个流星
+    function createMultipleShootingStars() {
+        const count = Math.floor(Math.random() * 3) + 1;  // 随机创建1-3颗流星
+        for (let i = 0; i < count; i++) {
+            setTimeout(() => createShootingStar(), i * 300);  // 间隔300ms创建流星
+        }
+    }
+
+    // 初始化
+    createStars();
+    setInterval(createMultipleShootingStars, 2000);  // 每2秒触发一次流星群
+    
+    // ... rest of the code ...
+</script>
+<!-- /* 流星动画 */
+@keyframes shooting-star {
+    0% {
+        transform: translateX(200px) translateY(-200px) rotate(-45deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(-200vh) translateY(200vh) rotate(-45deg);
+        opacity: 0;
+    }
+}
+
+.shooting-star {
+    position: absolute;
+    width: 150px;  /* 增加流星长度 */
+    height: 2px;
+    /* 添加多彩流星效果 */
+    background: linear-gradient(90deg, 
+        rgba(255,255,255,0) 0%,
+        rgba(255,255,255,0.3) 30%,
+        rgba(255,255,255,1) 50%,
+        rgba(240,240,255,1) 70%,
+        rgba(70,120,255,0.3) 80%,
+        rgba(70,120,255,0) 100%
+    );
+    animation: shooting-star 3s linear;  /* 增加动画时间 */
+    box-shadow: 0 0 10px rgba(255,255,255,0.5);  /* 添加发光效果 */
+}
+
+// ... existing code ... -->
+
+<script>
+    // 创建流星
+    function createShootingStar() {
+        const stars = document.querySelector('.stars');
+        const shootingStar = document.createElement('div');
+        shootingStar.className = 'shooting-star';
+        
+        // 随机起始位置
+        const startX = Math.random() * window.innerWidth;
+        shootingStar.style.top = '-100px';  // 从屏幕顶部开始
+        shootingStar.style.left = `${startX}px`;
+        
+        // 随机选择流星颜色
+        const colors = [
+            'rgba(255,255,255,1)',  // 白色
+            'rgba(70,120,255,1)',   // 蓝色
+            'rgba(255,220,220,1)',  // 粉色
+        ];
+        const randomColor = colors[Math.floor(Math.random() * colors.length)];
+        shootingStar.style.background = `linear-gradient(90deg, 
+            rgba(255,255,255,0) 0%,
+            ${randomColor.replace('1)', '0.3)')} 30%,
+            ${randomColor} 50%,
+            ${randomColor} 70%,
+            ${randomColor.replace('1)', '0.3)')} 80%,
+            rgba(255,255,255,0) 100%
+        )`;
+
+        stars.appendChild(shootingStar);
+
+        shootingStar.addEventListener('animationend', () => {
+            shootingStar.remove();
+        });
+    }
+
+    // 创建多个流星
+    function createMultipleShootingStars() {
+        const count = Math.floor(Math.random() * 2) + 1;  // 随机创建1-2颗流星
+        for (let i = 0; i < count; i++) {
+            setTimeout(() => createShootingStar(), i * 500);  // 间隔500ms创建流星
+        }
+    }
+
+    // 初始化
+    createStars();
+    setInterval(createMultipleShootingStars, 4000);  // 每4秒触发一次流星群
+</script>
